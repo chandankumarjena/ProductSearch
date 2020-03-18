@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import com.sapient.ProductSearch.bean.Product;
@@ -14,6 +15,7 @@ public class ProductService {
 	@Autowired
 	ProductRepository productRepository;
 	
+	@Cacheable("products")
 	public List<Product> getGroupByProduct(String filterBy, String data){
 		List<Product> products = productRepository.findAll();
 		List<Product> filteredProduct = null;
@@ -29,11 +31,13 @@ public class ProductService {
 		return filteredProduct;
 	}
 	
+	@Cacheable("optionalProduct")
 	public Optional<Product> getProductsBySKU(String sku) {
 		List<Product> products = productRepository.findAll();		
 		return products.stream().filter(p -> p.getSkuId().equalsIgnoreCase(sku)).findFirst();
 	}
 	
+	@Cacheable("calculateProduct")
 	public long getNumberOfProductBySeller(String seller) {
 		List<Product> products = productRepository.findAll();	
 		return products.stream().filter(p -> p.getSeller().equalsIgnoreCase(seller)).count();
