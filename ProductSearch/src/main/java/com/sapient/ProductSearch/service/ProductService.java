@@ -5,7 +5,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.sapient.ProductSearch.bean.Product;
@@ -14,6 +16,8 @@ import com.sapient.ProductSearch.bean.Product;
 public class ProductService {
 	@Autowired
 	ProductRepository productRepository;
+	@Autowired
+	CacheManager cacheManager;
 	
 	@Cacheable("products")
 	public List<Product> getGroupByProduct(String filterBy, String data){
@@ -42,5 +46,15 @@ public class ProductService {
 		List<Product> products = productRepository.findAll();	
 		return products.stream().filter(p -> p.getSeller().equalsIgnoreCase(seller)).count();
 	}
+	
+	public void evictAllCaches() {
+        cacheManager.getCacheNames().stream()
+          .forEach(cacheName -> cacheManager.getCache(cacheName).clear());
+    }
+
+    @Scheduled(fixedRate = 72000)
+    public void evictAllcachesAtIntervals() {
+        evictAllCaches();
+    }
 
 }
