@@ -21,12 +21,12 @@ public class SearchController {
 		return productService.getGroupByProduct(filterBy, data);
 	}
 	
-	@GetMapping("/products/sku/{skuName}")
+	@GetMapping("/products/skus/{skuName}")
 	public Optional<Product> getProductsBySKU(@PathVariable String skuName){
 		return productService.getProductsBySKU(skuName);
 	}
 	
-	@GetMapping("/products/seller/{sellerName}")
+	@GetMapping("/products/sellers/{sellerName}")
 	public long getNumberOfProductBySeller(@PathVariable String sellerName){
 		return productService.getNumberOfProductBySeller(sellerName);
 	}
